@@ -1,6 +1,8 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <math.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "transition_handler.h"
 
@@ -91,6 +93,20 @@ void start_transition(TRANSITION_TYPE type)
 void run_transition(void)
 {
     current_transition();
+}
+
+TRANSITION_TYPE get_random_transition(void)
+{
+    static int has_run = 0;
+    int max = TRANSITION_ALL;
+
+    if (has_run == 0)
+    {
+        srand((unsigned int)time(0));
+        has_run = 1;
+    }
+
+     return (TRANSITION_TYPE)(rand() % (int)TRANSITION_ALL);
 }
 
 static void init_fade(void)
