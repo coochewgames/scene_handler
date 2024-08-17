@@ -14,6 +14,9 @@ typedef enum
     TRANSITION_ALL
 } TRANSITION_TYPE;
 
+static const float DEFAULT_TRANSITION_DURATION = 5.0f;
+
+void set_transition_duration(float duration);
 bool is_transition_active(void);
 
 void set_transition_start_screen(void);

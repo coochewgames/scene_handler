@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 
 #include "transition_handler.h"
 
@@ -15,9 +16,9 @@ typedef struct
     float end_value;
 } TRANSITION_DATA;
 
-
 static bool transition_active = false;
 static TRANSITION_DATA data;
+static float transition_duration = DEFAULT_TRANSITION_DURATION;
 
 static Image start_screen;
 static Texture2D end_screen;
@@ -34,6 +35,11 @@ static void run_slide_left(void);
 static void init_slide_right(void);
 static void run_slide_right(void);
 
+
+void set_transition_duration(float duration)
+{
+    transition_duration = duration;
+}
 
 bool is_transition_active(void)
 {
@@ -113,7 +119,7 @@ static void init_fade(void)
 {
     current_transition = &run_fade;
 
-    data.duration = 2.0f;
+    data.duration = transition_duration;
     data.start_texture = LoadTextureFromImage(start_screen);
     data.end_texture = end_screen;
     data.start_value = 255;
@@ -154,7 +160,7 @@ static void init_slide_left_overlap(void)
 {
     current_transition = &run_slide_left_overlap;
 
-    data.duration = 2.0f;
+    data.duration = transition_duration;
     data.start_texture = LoadTextureFromImage(start_screen);
     data.end_texture = end_screen;
     data.start_value = (float)GetScreenWidth() * -1.0f;
@@ -190,7 +196,7 @@ static void init_slide_right_overlap(void)
 {
     current_transition = &run_slide_right_overlap;
 
-    data.duration = 2.0f;
+    data.duration = transition_duration;
     data.start_texture = LoadTextureFromImage(start_screen);
     data.end_texture = end_screen;
     data.start_value = (float)GetScreenWidth();
@@ -226,7 +232,7 @@ static void init_slide_left(void)
 {
     current_transition = &run_slide_left;
 
-    data.duration = 2.0f;
+    data.duration = transition_duration;
     data.start_texture = LoadTextureFromImage(start_screen);
     data.end_texture = end_screen;
     data.start_value = (float)GetScreenWidth() * -1.0f;
@@ -264,7 +270,7 @@ static void init_slide_right(void)
 {
     current_transition = &run_slide_right;
 
-    data.duration = 2.0f;
+    data.duration = transition_duration;
     data.start_texture = LoadTextureFromImage(start_screen);
     data.end_texture = end_screen;
     data.start_value = (float)GetScreenWidth();
