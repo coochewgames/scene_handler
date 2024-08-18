@@ -22,6 +22,7 @@ static float transition_duration = DEFAULT_TRANSITION_DURATION;
 
 static Image start_screen;
 static Texture2D end_screen;
+static RenderTexture2D screen_texture;
 
 static void (*current_transition)(void); 
 static void init_fade(void);
@@ -55,7 +56,7 @@ void set_transition_start_screen(void)
 
 void set_transition_end_screen(void (*render_method)(void))
 {
-    RenderTexture2D screen_texture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+    screen_texture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
     
     BeginTextureMode(screen_texture);
         render_method();
@@ -308,8 +309,13 @@ static void run_slide_right(void)
 
 static void end_transition()
 {
-    transition_active = false;
+    UnloadImage(start_screen);
+    UnloadTexture(end_screen);
 
     UnloadTexture(data.start_texture);
     UnloadTexture(data.end_texture);
+
+    UnloadRenderTexture(screen_texture);
+
+    transition_active = false;
 }
