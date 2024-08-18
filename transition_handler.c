@@ -35,6 +35,8 @@ static void run_slide_left(void);
 static void init_slide_right(void);
 static void run_slide_right(void);
 
+static void end_transition();
+
 
 void set_transition_duration(float duration)
 {
@@ -152,7 +154,7 @@ static void run_fade(void)
 
     if (data.start_value < 0.0f || data.end_value > 255.0f)
     {
-        transition_active = false;
+        end_transition();
     }
 }
 
@@ -188,7 +190,7 @@ static void run_slide_left_overlap(void)
 
     if (data.start_value >= data.end_value)
     {
-        transition_active = false;
+        end_transition();
     }
 }
 
@@ -224,7 +226,7 @@ static void run_slide_right_overlap(void)
 
     if (data.start_value <= data.end_value)
     {
-        transition_active = false;
+        end_transition();
     }
 }
 
@@ -262,7 +264,7 @@ static void run_slide_left(void)
 
     if (data.start_value >= data.end_value)
     {
-        transition_active = false;
+        end_transition();
     }
 }
 
@@ -300,6 +302,14 @@ static void run_slide_right(void)
 
     if (data.start_value <= data.end_value)
     {
-        transition_active = false;
+        end_transition();
     }
+}
+
+static void end_transition()
+{
+    transition_active = false;
+
+    UnloadTexture(data.start_texture);
+    UnloadTexture(data.end_texture);
 }
