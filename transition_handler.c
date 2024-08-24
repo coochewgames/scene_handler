@@ -10,7 +10,6 @@
 typedef struct
 {
     float duration;
-    float elapsed;
     Texture2D start_texture;
     Texture2D end_texture;
     float start_value;
@@ -38,7 +37,6 @@ static void init_slide_right(void);
 static void run_slide_right(void);
 
 static void end_transition();
-static void draw_profile(float time_delta);
 
 
 void set_transition_duration(float duration)
@@ -125,7 +123,6 @@ static void init_fade(void)
     current_transition = &run_fade;
 
     data.duration = transition_duration;
-    data.elapsed = 0.0f;
     data.start_texture = LoadTextureFromImage(start_screen);
     data.end_texture = end_screen;
     data.start_value = 255;
@@ -151,12 +148,10 @@ static void run_fade(void)
 
         DrawTexture(data.start_texture, 0, 0, start_tint);
         DrawTexturePro(data.end_texture, rect_end_source, rect_end_dest, (Vector2){ 0, 0 }, 0.0f, end_tint);
-        draw_profile(time_delta);
     EndDrawing();
 
     data.start_value -= variance;
     data.end_value += variance;
-    data.elapsed += time_delta;
 
     if (data.start_value < 0.0f || data.end_value > 255.0f)
     {
@@ -169,7 +164,6 @@ static void init_slide_left_overlap(void)
     current_transition = &run_slide_left_overlap;
 
     data.duration = transition_duration;
-    data.elapsed = 0.0f;
     data.start_texture = LoadTextureFromImage(start_screen);
     data.end_texture = end_screen;
     data.start_value = (float)GetScreenWidth() * -1.0f;
@@ -191,11 +185,9 @@ static void run_slide_left_overlap(void)
 
         DrawTexture(data.start_texture, 0, 0, WHITE);
         DrawTexturePro(data.end_texture, rect_end_source, rect_end_dest, (Vector2){ x, 0 }, 0.0f, WHITE);
-        draw_profile(time_delta);
     EndDrawing();
 
     data.start_value += variance;
-    data.elapsed += time_delta;
 
     if (data.start_value >= data.end_value)
     {
@@ -208,7 +200,6 @@ static void init_slide_right_overlap(void)
     current_transition = &run_slide_right_overlap;
 
     data.duration = transition_duration;
-    data.elapsed = 0.0f;
     data.start_texture = LoadTextureFromImage(start_screen);
     data.end_texture = end_screen;
     data.start_value = (float)GetScreenWidth();
@@ -230,11 +221,9 @@ static void run_slide_right_overlap(void)
 
         DrawTexture(data.start_texture, 0, 0, WHITE);
         DrawTexturePro(data.end_texture, rect_end_source, rect_end_dest, (Vector2){ x, 0 }, 0.0f, WHITE);
-        draw_profile(time_delta);
     EndDrawing();
 
     data.start_value -= variance;
-    data.elapsed += time_delta;
 
     if (data.start_value <= data.end_value)
     {
@@ -247,7 +236,6 @@ static void init_slide_left(void)
     current_transition = &run_slide_left;
 
     data.duration = transition_duration;
-    data.elapsed = 0.0f;
     data.start_texture = LoadTextureFromImage(start_screen);
     data.end_texture = end_screen;
     data.start_value = (float)GetScreenWidth() * -1.0f;
@@ -275,7 +263,6 @@ static void run_slide_left(void)
     EndDrawing();
 
     data.start_value += variance;
-    data.elapsed += time_delta;
 
     if (data.start_value >= data.end_value)
     {
@@ -288,7 +275,6 @@ static void init_slide_right(void)
     current_transition = &run_slide_right;
 
     data.duration = transition_duration;
-    data.elapsed = 0.0f;
     data.start_texture = LoadTextureFromImage(start_screen);
     data.end_texture = end_screen;
     data.start_value = (float)GetScreenWidth();
@@ -312,11 +298,9 @@ static void run_slide_right(void)
 
         DrawTexture(data.start_texture, start_x, 0, WHITE);
         DrawTexturePro(data.end_texture, rect_end_source, rect_end_dest, (Vector2){ end_x, 0 }, 0.0f, WHITE);
-        draw_profile(time_delta);
     EndDrawing();
 
     data.start_value -= variance;
-    data.elapsed += time_delta;
 
     if (data.start_value <= data.end_value)
     {
@@ -335,11 +319,4 @@ static void end_transition()
     UnloadRenderTexture(screen_texture);
 
     transition_active = false;
-}
-
-static void draw_profile(float time_delta)
-{
-    char string[256];
-    snprintf(string, 256, "Delta:%f\nElapsed:%f\nStart:%f\nEnd:%f", time_delta, data.elapsed, data.start_value, data.end_value);
-    DrawText(string, 0, 0, 32, RED);
 }
