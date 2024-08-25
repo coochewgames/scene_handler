@@ -259,7 +259,6 @@ static void run_slide_left(void)
 
         DrawTexture(data.start_texture, start_x, 0, WHITE);
         DrawTexturePro(data.end_texture, rect_end_source, rect_end_dest, (Vector2){ end_x, 0 }, 0.0f, WHITE);
-        draw_profile(time_delta);
     EndDrawing();
 
     data.start_value += variance;
