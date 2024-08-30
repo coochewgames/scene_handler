@@ -329,7 +329,7 @@ static void end_transition(void)
     UnloadTexture(end_screen);
 
     UnloadTexture(data.start_texture);
-    UnloadTexture(data.end_texture);
+    UnloadTexture(data.end_texture);  // Extraneous as end_screen is assigned to data.end_texture
 
     UnloadRenderTexture(screen_texture);
 
