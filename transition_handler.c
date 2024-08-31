@@ -30,14 +30,19 @@ static struct timeval transition_start_time;
 static void (*current_transition)(void); 
 static void init_fade(void);
 static void run_fade(void);
+static void draw_fade(Color start_tint, Color end_tint);
 static void init_slide_left_overlap(void);
 static void run_slide_left_overlap(void);
+static void draw_slide_left_overlap(float end_x);
 static void init_slide_right_overlap(void);
 static void run_slide_right_overlap(void);
+static void draw_slide_right_overlap(float end_x);
 static void init_slide_left(void);
 static void run_slide_left(void);
+static void draw_slide_left(float start_x, float end_x);
 static void init_slide_right(void);
 static void run_slide_right(void);
+static void draw_slide_right(float start_x, float end_x);
 
 static void end_transition(void);
 
@@ -148,13 +153,23 @@ static void run_fade(void)
 
     if (start_variance < 0.0f || end_variance > 255.0f)
     {
+        start_tint.a = (unsigned char)data.end_value;
+        end_tint.a = (unsigned char)data.start_value;
+
+        draw_fade(start_tint, end_tint);
         end_transition();
-        return;
     }
+    else
+    {
+        start_tint.a = (unsigned char)start_variance;
+        end_tint.a = (unsigned char)end_variance;
 
-    start_tint.a = (unsigned char)start_variance;
-    end_tint.a = (unsigned char)end_variance;
+        draw_fade(start_tint, end_tint);
+    }
+}
 
+static void draw_fade(Color start_tint, Color end_tint)
+{
     // RenderTextures have an opposite Y axis
     Rectangle rect_end_source = (Rectangle){ 0, 0, (float)data.end_texture.width, -(float)data.end_texture.height };
     Rectangle rect_end_dest = (Rectangle){ 0, 0, (float)data.end_texture.width, (float)data.end_texture.height };
@@ -188,10 +203,17 @@ static void run_slide_left_overlap(void)
 
     if (start_variance >= data.end_value)
     {
+        draw_slide_left_overlap(data.end_value);
         end_transition();
-        return;
     }
+    else
+    {
+        draw_slide_left_overlap(start_variance);
+    }
+}
 
+static void draw_slide_left_overlap(float end_x)
+{
     // RenderTextures have an opposite Y axis
     Rectangle rect_end_source = (Rectangle){ 0, 0, (float)data.end_texture.width, -(float)data.end_texture.height };
     Rectangle rect_end_dest = (Rectangle){ 0, 0, (float)data.end_texture.width, (float)data.end_texture.height };
@@ -200,7 +222,7 @@ static void run_slide_left_overlap(void)
         ClearBackground(BLACK);
 
         DrawTexture(data.start_texture, 0, 0, WHITE);
-        DrawTexturePro(data.end_texture, rect_end_source, rect_end_dest, (Vector2){ start_variance, 0 }, 0.0f, WHITE);
+        DrawTexturePro(data.end_texture, rect_end_source, rect_end_dest, (Vector2){ end_x, 0 }, 0.0f, WHITE);
     EndDrawing();
 }
 
@@ -225,10 +247,17 @@ static void run_slide_right_overlap(void)
 
     if (start_variance <= data.end_value)
     {
+        draw_slide_right_overlap(data.end_value);
         end_transition();
-        return;
     }
+    else
+    {
+        draw_slide_right_overlap(start_variance);
+    }
+}
 
+static void draw_slide_right_overlap(float end_x)
+{
     // RenderTextures have an opposite Y axis
     Rectangle rect_end_source = (Rectangle){ 0, 0, (float)data.end_texture.width, -(float)data.end_texture.height };
     Rectangle rect_end_dest = (Rectangle){ 0, 0, (float)data.end_texture.width, (float)data.end_texture.height };
@@ -237,7 +266,7 @@ static void run_slide_right_overlap(void)
         ClearBackground(BLACK);
 
         DrawTexture(data.start_texture, 0, 0, WHITE);
-        DrawTexturePro(data.end_texture, rect_end_source, rect_end_dest, (Vector2){ start_variance, 0 }, 0.0f, WHITE);
+        DrawTexturePro(data.end_texture, rect_end_source, rect_end_dest, (Vector2){ end_x, 0 }, 0.0f, WHITE);
     EndDrawing();
 }
 
@@ -263,13 +292,20 @@ static void run_slide_left(void)
 
     if (start_variance >= data.end_value)
     {
+        draw_slide_left(data.start_value, data.end_value);
         end_transition();
-        return;
     }
+    else
+    {
+        float start_x = ((float)width * -1.0f) - start_variance;
+        float end_x = start_variance;
 
-    float start_x = ((float)width * -1.0f) - start_variance;
-    float end_x = start_variance;
+        draw_slide_left(start_x, end_x);
+    }
+}
 
+static void draw_slide_left(float start_x, float end_x)
+{
     // RenderTextures have an opposite Y axis
     Rectangle rect_end_source = (Rectangle){ 0, 0, (float)data.end_texture.width, -(float)data.end_texture.height };
     Rectangle rect_end_dest = (Rectangle){ 0, 0, (float)data.end_texture.width, (float)data.end_texture.height };
@@ -304,13 +340,20 @@ static void run_slide_right(void)
 
     if (start_variance <= data.end_value)
     {
+        draw_slide_right(data.start_value, data.end_value);
         end_transition();
-        return;
     }
+    else
+    {
+        float start_x = (float)width - start_variance;
+        float end_x = start_variance;
 
-    float start_x = (float)width - start_variance;
-    float end_x = start_variance;
+        draw_slide_right(start_x, end_x);
+    }
+}
 
+static void draw_slide_right(float start_x, float end_x)
+{
     // RenderTextures have an opposite Y axis
     Rectangle rect_end_source = (Rectangle){ 0, 0, (float)data.end_texture.width, -(float)data.end_texture.height };
     Rectangle rect_end_dest = (Rectangle){ 0, 0, (float)data.end_texture.width, (float)data.end_texture.height };
