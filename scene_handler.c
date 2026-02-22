@@ -95,7 +95,7 @@ bool next_scene(void)
         end_scene();
     }
 
-    if (++current_scene_pos > num_scenes)
+    if (++current_scene_pos >= num_scenes)
     {
         current_scene_pos = 0;
     }
@@ -126,7 +126,7 @@ int find_scene_pos(char *scene_name)
 {
     int scene_pos = NO_SCENE;
 
-    for(int pos = 0; pos < MAX_SCENE_ENTRIES; pos++)
+    for (int pos = 0; pos < num_scenes; pos++)
     {
         if (strncmp(scene_name, scene_entries[pos].name, MAX_SCENE_NAME_LEN) == 0)
         {

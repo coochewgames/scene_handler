@@ -521,14 +521,37 @@ static void draw_circle_contract(float radius)
 
 static void end_transition(void)
 {
-    UnloadImage(start_screen);
-    UnloadTexture(end_screen);
+    if (start_screen.data != NULL)
+    {
+        UnloadImage(start_screen);
+        start_screen = (Image){ 0 };
+    }
 
-    UnloadTexture(data.start_texture);
-    UnloadTexture(data.end_texture);  // Extraneous as end_screen is assigned to data.end_texture
+    if (data.start_texture.id != 0)
+    {
+        UnloadTexture(data.start_texture);
+        data.start_texture = (Texture2D){ 0 };
+    }
 
-    UnloadRenderTexture(data.transition_texture);
-    UnloadRenderTexture(screen_texture);
+    // end_screen and data.end_texture reference the same underlying texture.
+    if (end_screen.id != 0)
+    {
+        UnloadTexture(end_screen);
+        end_screen = (Texture2D){ 0 };
+    }
+    data.end_texture = (Texture2D){ 0 };
+
+    if (data.transition_texture.id != 0)
+    {
+        UnloadRenderTexture(data.transition_texture);
+        data.transition_texture = (RenderTexture2D){ 0 };
+    }
+
+    if (screen_texture.id != 0)
+    {
+        UnloadRenderTexture(screen_texture);
+        screen_texture = (RenderTexture2D){ 0 };
+    }
 
     transition_active = false;
 }
