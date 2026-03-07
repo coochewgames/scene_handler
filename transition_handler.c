@@ -532,12 +532,9 @@ static void end_transition(void)
         data.start_texture = (Texture2D){ 0 };
     }
 
-    // end_screen and data.end_texture reference the same underlying texture.
-    if (end_screen.id != 0)
-    {
-        UnloadTexture(end_screen);
-        end_screen = (Texture2D){ 0 };
-    }
+    // end_screen/data.end_texture are aliases of screen_texture.texture.
+    // The owning resource is screen_texture and must be unloaded once.
+    end_screen = (Texture2D){ 0 };
     data.end_texture = (Texture2D){ 0 };
 
     if (data.transition_texture.id != 0)
