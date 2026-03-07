@@ -140,7 +140,6 @@ void run_transition(void)
 TRANSITION_TYPE get_random_transition(void)
 {
     static int has_run = 0;
-    int max = TRANSITION_ALL;
 
     if (has_run == 0)
     {
